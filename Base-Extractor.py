@@ -1,5 +1,10 @@
 import base64
 import re
+import os
+from colorama import Fore, Back, Style, init
+
+# Initialize colorama
+init(autoreset=True)
 
 def is_base64_encoded(data):
     try:
@@ -23,20 +28,29 @@ def extract_base64_strings(file_path):
     return base64_strings
 
 def main():
-    file_path = input("Enter the name of the file to scan: ").strip()
+    print(Fore.CYAN + Back.BLACK + Style.BRIGHT + "Welcome to the Automatic Base64 Scanner!" + Style.RESET_ALL)
+    print(Fore.GREEN + Back.BLACK + "Because sometimes I don't have time for that." + Style.RESET_ALL)
+    print()
+
+    file_path = input(Fore.YELLOW + Back.BLACK + "Enter the file path to scan (relative or absolute): " + Style.RESET_ALL).strip()
+
+    # Resolve to absolute path for clarity
+    resolved_path = os.path.abspath(file_path)
 
     try:
-        base64_strings = extract_base64_strings(file_path)
+        base64_strings = extract_base64_strings(resolved_path)
         if base64_strings:
-            print("Found Base64 encoded strings:")
+            print(Fore.GREEN + Back.BLACK + "\nFound Base64 encoded strings:" + Style.RESET_ALL)
             for b64_str in base64_strings:
-                print(f"Decoded: {base64.b64decode(b64_str).decode('ascii')}")
+                decoded = base64.b64decode(b64_str).decode('ascii')
+                print(Fore.WHITE + f"Encoded: {b64_str}" + Style.RESET_ALL)
+                print(Fore.WHITE + f"Decoded: {decoded}" + Style.RESET_ALL)  # Removed yellow background
         else:
-            print("No Base64 encoded strings found.")
+            print(Fore.RED + Back.BLACK + "No Base64 encoded strings found." + Style.RESET_ALL)
     except FileNotFoundError:
-        print("File not found. Please check the file path and try again.")
+        print(Fore.RED + Back.BLACK + f"File not found: {resolved_path}. Please check the path and try again." + Style.RESET_ALL)
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(Fore.RED + Back.BLACK + f"An error occurred: {e}" + Style.RESET_ALL)
 
 if __name__ == "__main__":
     main()
